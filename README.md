@@ -1,21 +1,39 @@
-# Building a Remote MCP Server on Cloudflare (Without Auth)
+# MCP-server
 
-This example allows you to deploy a remote MCP server that doesn't require authentication on Cloudflare Workers. 
+# Universal MCP Server
 
-## Get started: 
+A Universal MCP (Model Context Protocol) Server running on Cloudflare Workers. This server provides various tools including a calculator and a universal API caller that can be used by any MCP client.
 
-[![Deploy to Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/ai/tree/main/demos/remote-mcp-authless)
+## Features
 
-This will deploy your MCP server to a URL like: `remote-mcp-server-authless.<your-account>.workers.dev/sse`
+- **Authless**: No authentication required to use the server
+- **CORS-enabled**: Works with browser-based clients
+- **Session Management**: Properly handles MCP sessions
+- **Tools**:
+  - `add`: Simple addition tool
+  - `calculate`: Advanced calculator with multiple operations
+  - `callApi`: Universal API caller for making HTTP requests to any endpoint
+  - `system.listTools`: Lists all available tools
 
-Alternatively, you can use the command line below to get the remote MCP Server created on your local machine:
+## Deployment
+
+This server can be deployed to Cloudflare Workers using GitHub Actions:
+
+1. Fork this repository
+2. Add your Cloudflare API Token and Account ID as GitHub secrets:
+   - `CF_API_TOKEN`: Your Cloudflare API token with Workers permissions
+   - `CF_ACCOUNT_ID`: Your Cloudflare account ID
+3. Push to the main branch to trigger deployment
+
+## Local Development
+
 ```bash
-npm create cloudflare@latest -- my-mcp-server --template=cloudflare/ai/demos/remote-mcp-authless
+# Install dependencies
+npm install
+
+# Start local development server
+npm run dev
 ```
-
-## Customizing your MCP Server
-
-To add your own [tools](https://developers.cloudflare.com/agents/model-context-protocol/tools/) to the MCP server, define each tool inside the `init()` method of `src/index.ts` using `this.server.tool(...)`. 
 
 ## Connect to Cloudflare AI Playground
 
