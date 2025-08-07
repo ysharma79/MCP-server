@@ -1,0 +1,21 @@
+name = "universal-mcp-server"
+main = "src/index.ts"
+compatibility_date = "2023-10-30"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [
+  { name = "MCP_OBJECT", class_name = "MyMCP" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MyMCP"]
+
+[vars]
+# Add your environment variables here
+# MY_VAR = "my-value"
+
+# Uncomment to enable local development with Miniflare
+# [miniflare]
+# durable_objects_persist = true
