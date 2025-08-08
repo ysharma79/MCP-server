@@ -27,6 +27,8 @@ This server can be deployed to Cloudflare Workers using GitHub Actions:
 
 ## Local Development
 
+### Standard Method
+
 ```bash
 # Install dependencies
 npm install
@@ -34,6 +36,23 @@ npm install
 # Start local development server
 npm run dev
 ```
+
+### Using Docker
+
+This project can also be run in a Docker container:
+
+```bash
+# Build and start the container
+docker-compose up --build
+
+# Or run in detached mode
+docker-compose up -d
+
+# Stop the container
+docker-compose down
+```
+
+The server will be available at `http://localhost:8787`
 
 ## Connect to Cloudflare AI Playground
 
