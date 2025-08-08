@@ -17,7 +17,19 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-optional
+        env:
+          SKIP_WRANGLER_TYPES: "true"
+      - name: Create worker-configuration.d.ts
+        run: |
+          cat > worker-configuration.d.ts << 'EOL'
+          declare namespace Cloudflare {
+            interface Env {
+              MCP_OBJECT: DurableObjectNamespace<import("./src/index").MyMCP>;
+            }
+          }
+          interface Env extends Cloudflare.Env {}
+          EOL
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:

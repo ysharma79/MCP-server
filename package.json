@@ -10,7 +10,7 @@
 		"start": "wrangler dev",
 		"cf-typegen": "wrangler types",
 		"type-check": "tsc --noEmit",
-		"prepare": "npm run cf-typegen"
+		"prepare": "node -e \"try{require('fs').accessSync('.git');process.exit(0)}catch(e){process.exit(1)}\" && npm run cf-typegen || echo 'Skipping type generation in CI environment'"
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "1.17.1",
