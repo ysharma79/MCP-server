@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MCP Inspector Launcher</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>MCP Inspector Launcher</h1>
+    
+    <div class="card">
+        <h2>Launch MCP Inspector</h2>
+        <p>Click the button below to open the MCP Inspector with your server URL pre-configured:</p>
+        <input type="text" id="serverUrl" value="https://my-mcp-server.humanizeyashapitest.workers.dev" placeholder="Server URL">
+        <button onclick="launchInspector()">Launch MCP Inspector</button>
+    </div>
+    
+    <div class="card">
+        <h2>Direct API Testing</h2>
+        <p>You can also test your MCP server API directly:</p>
+        <button onclick="testListTools()">Test List Tools</button>
+        <button onclick="testCalculator()">Test Calculator</button>
+        <pre id="result" style="background-color: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto;"></pre>
+    </div>
+    
+    <script>
+        function launchInspector() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const inspectorUrl = `https://inspector.modelcontextprotocol.io/?url=${encodeURIComponent(serverUrl)}&transportType=sse`;
+            window.open(inspectorUrl, '_blank');
+        }
+        
+        async function testListTools() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const result = document.getElementById('result');
+            result.textContent = "Loading...";
+            
+            try {
+                // Generate a session ID
+                const sessionId = generateUUID();
+                
+                // Initialize session
+                const initResponse = await fetch(`${serverUrl}/mcp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'mcp-session-id': sessionId
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "initialize",
+                        params: {
+                            client: {
+                                name: "Test Client",
+                                version: "1.0.0"
+                            }
+                        },
+                        id: "init-1"
+                    })
+                });
+                
+                const initData = await initResponse.json();
+                
+                // List tools
+                const listResponse = await fetch(`${serverUrl}/mcp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'mcp-session-id': sessionId
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "system.listTools",
+                        params: {},
+                        id: "list-1"
+                    })
+                });
+                
+                const listData = await listResponse.json();
+                result.textContent = JSON.stringify(listData, null, 2);
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testCalculator() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const result = document.getElementById('result');
+            result.textContent = "Loading...";
+            
+            try {
+                // Generate a session ID
+                const sessionId = generateUUID();
+                
+                // Initialize session
+                const initResponse = await fetch(`${serverUrl}/mcp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'mcp-session-id': sessionId
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "initialize",
+                        params: {
+                            client: {
+                                name: "Test Client",
+                                version: "1.0.0"
+                            }
+                        },
+                        id: "init-1"
+                    })
+                });
+                
+                const initData = await initResponse.json();
+                
+                // Test calculator
+                const calcResponse = await fetch(`${serverUrl}/mcp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'mcp-session-id': sessionId
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "calculate",
+                        params: {
+                            operation: "add",
+                            a: 42,
+                            b: 58
+                        },
+                        id: "calc-1"
+                    })
+                });
+                
+                const calcData = await calcResponse.json();
+                result.textContent = JSON.stringify(calcData, null, 2);
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    </script>
+</body>
+</html>
